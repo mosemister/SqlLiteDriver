@@ -1,0 +1,47 @@
+plugins {
+    id 'java-library'
+    id("org.spongepowered.gradle.plugin") version "2.2.0"
+}
+
+// This may not be required, but has solved issues in the past
+compileJava.options.encoding = 'UTF-8'
+
+// TODO: Change the following to match your information
+group = 'org.sqldriver'
+version = '1.0.0-SNAPSHOT'
+description = 'SqlLite driver'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'sponge-repo'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+}
+
+dependencies {
+    implementation 'org.xerial:sqlite-jdbc:3.49.0.0'
+
+}
+
+jar {
+    from {
+        configurations.runtimeClasspath.filter {
+            it.name.contains("sqlite");
+        }.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+sponge {
+    apiVersion("8.0.0")
+    license("MIT")
+    loader {
+        name("java_plain")
+        version("1.0")
+    }
+    plugin("sqllite_driver") {
+        displayName("SQL-Lite Driver")
+        entrypoint("org.sqldriver.SpongeDriver")
+        description("Adds the ability to use SQL Lite databases")
+    }
+}
